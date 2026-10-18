@@ -1,5 +1,5 @@
 export const site = {
-  name: 'HELM LAB',
+  name: 'Jasa Cuci Helm',
   tagline: 'Washed in Shadow',
   description: 'Premium small-batch coffee, roasted dark and delivered fresh.',
   whatsapp: '15551234567',
