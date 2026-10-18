@@ -1,0 +1,392 @@
+---
+import { categories, nav, site } from "../data/site";
+
+const pathname = Astro.url.pathname;
+const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+};
+---
+
+<header
+    class="fixed inset-x-0 top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl transition-all"
+    id="site-nav"
+>
+    <div class="container-site flex h-16 items-center justify-between md:h-20">
+        <a href="/" class="group flex items-center gap-2.5">
+            <span class="flex h-8 w-8 items-center justify-center rounded-sm bg-primary text-sm font-extrabold text-primary-foreground transition-transform group-hover:scale-105 font-display">
+                H
+            </span>
+            <span class="font-display text-xl font-bold tracking-tight">
+                {site.name}
+            </span>
+        </a>
+
+        <nav
+            class="hidden items-center gap-8 lg:flex"
+            aria-label="Main navigation"
+        >
+            {nav.map((item) =>
+                item.label === "Shop" ? (
+                    <div class="relative h-full" id="shop-nav-item">
+                        <a
+                            href={item.href}
+                            id="shop-trigger"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            aria-controls="shop-mega-menu"
+                            class:list={[
+                                "group inline-flex items-center gap-1.5 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-background",
+                                isActive(item.href)
+                                    ? "text-primary"
+                                    : "text-muted-foreground hover:text-primary",
+                            ]}
+                        >
+                            <span>Shop</span>
+                            <svg
+                                class="h-3.5 w-3.5 transition-transform duration-200"
+                                data-shop-chevron
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                            <span
+                                class="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-primary transition-transform duration-200 group-hover:scale-x-100"
+                                data-shop-underline
+                            ></span>
+                        </a>
+                    </div>
+                ) : (
+                    <a
+                        href={item.href}
+                        class:list={[
+                            "text-sm font-medium transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-background",
+                            isActive(item.href)
+                                ? "text-primary"
+                                : "text-muted-foreground",
+                        ]}
+                    >
+                        {item.label}
+                    </a>
+                ),
+            )}
+        </nav>
+
+        <div class="flex items-center gap-3">
+            <a
+                href="/products"
+                class="hidden rounded-sm bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/85 sm:inline-flex"
+            >
+                Shop Now
+            </a>
+            <button
+                class="flex h-10 w-10 items-center justify-center rounded-sm border border-border text-foreground lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                id="menu-toggle"
+                aria-label="Toggle menu"
+                aria-expanded="false"
+                aria-controls="mobile-menu"
+            >
+                <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <line x1="4" y1="7" x2="20" y2="7" />
+                    <line x1="4" y1="12" x2="20" y2="12" />
+                    <line x1="4" y1="17" x2="20" y2="17" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div
+        id="shop-mega-menu"
+        aria-label="Shop categories"
+        class="pointer-events-none absolute left-0 top-full w-full -translate-y-2 border-t-2 border-primary bg-background/98 opacity-0 shadow-2xl shadow-black/40 transition-all duration-200"
+    >
+        <div class="container-site grid grid-cols-3 py-7 lg:grid-cols-6 lg:py-8">
+            {categories.map((category, index) => (
+                <a
+                    href={`/products?cat=${category.slug}`}
+                    class:list={[
+                        "group flex min-h-[148px] flex-col items-center justify-start px-3 text-center transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset",
+                        index > 0 ? "border-l border-border" : "",
+                    ]}
+                >
+                    <span class="text-[11px] font-bold uppercase tracking-[0.12em] text-foreground transition-colors duration-200 group-hover:text-primary">
+                        {category.name}
+                    </span>
+                    <span class="mt-5 flex h-20 items-center justify-center text-foreground/80 transition-transform duration-200 group-hover:scale-105 group-hover:text-foreground">
+                        {category.slug === "dark-roast" && (
+                            <svg
+                                width="86"
+                                height="72"
+                                viewBox="0 0 100 84"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.3"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M22 61c2-26 7-42 29-48 20-5 35 5 31 22-3 13-14 21-29 26L22 72V61Z" />
+                                <path d="m23 63 39-15c8-3 14-9 18-17M28 67l32-12c7-3 13-7 17-13M37 25c10-4 22-4 31 1M41 32c8-3 16-3 24 0" />
+                            </svg>
+                        )}
+                        {category.slug === "medium-roast" && (
+                            <svg
+                                width="86"
+                                height="72"
+                                viewBox="0 0 100 84"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.3"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M19 60c3-24 13-39 35-44 19-4 32 5 31 19-1 14-12 24-29 29L19 72V60Z" />
+                                <path d="m20 62 38-13c11-4 20-12 26-23M29 66l34-12c8-3 15-8 20-16M31 37c12-8 26-10 39-5M25 53c14-7 27-9 41-6" />
+                            </svg>
+                        )}
+                        {category.slug === "light-roast" && (
+                            <svg
+                                width="86"
+                                height="72"
+                                viewBox="0 0 100 84"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.3"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M26 68c-2-25 4-45 24-51 17-5 31 6 29 21-2 13-13 22-28 27L26 75V68Z" />
+                                <path d="m27 68 33-12c8-3 14-9 19-18M35 45c9-7 20-11 32-10M34 54c11-6 21-8 32-7M44 25c8-3 16-2 23 2" />
+                            </svg>
+                        )}
+                        {category.slug === "espresso" && (
+                            <svg
+                                width="86"
+                                height="72"
+                                viewBox="0 0 100 84"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.3"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M25 33h48v29c0 8-8 13-24 13S25 70 25 62V33Z" />
+                                <path d="M73 40h7c8 0 10 15 0 18h-7M21 76h57M31 27c0-9 5-12 5-17M45 27c0-9 5-12 5-17M59 27c0-9 5-12 5-17" />
+                            </svg>
+                        )}
+                        {category.slug === "decaf" && (
+                            <svg
+                                width="86"
+                                height="72"
+                                viewBox="0 0 100 84"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.3"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M21 33h52v30c0 8-9 13-26 13S21 71 21 63V33Z" />
+                                <path d="M73 40h7c8 0 10 14 0 18h-7M17 76h61M30 49h34M50 39v21M40 58h20" />
+                            </svg>
+                        )}
+                        {category.slug === "cold-brew" && (
+                            <svg
+                                width="86"
+                                height="72"
+                                viewBox="0 0 100 84"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.3"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M27 23h46l-5 51H32l-5-51Z" />
+                                <path d="M24 23h52M32 31h36M38 14h24M50 14v-6M38 48h25M41 58h19M45 68h10" />
+                            </svg>
+                        )}
+                    </span>
+                    <span class="mt-3 text-[10px] uppercase tracking-[0.1em] text-muted-foreground transition-colors group-hover:text-primary">
+                        Explore
+                    </span>
+                </a>
+            ))}
+        </div>
+    </div>
+
+    <div
+        class="hidden border-t border-border/40 bg-background/95 backdrop-blur-xl lg:hidden"
+        id="mobile-menu"
+    >
+        <nav
+            class="container-site flex flex-col py-4"
+            aria-label="Mobile navigation"
+        >
+            {nav.map((item) =>
+                item.label === "Shop" ? (
+                    <div>
+                        <button
+                            id="mobile-shop-trigger"
+                            class="flex w-full items-center justify-between py-3 text-left text-sm font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                            aria-expanded="false"
+                            aria-controls="mobile-shop-categories"
+                        >
+                            <span>Shop</span>
+                            <svg
+                                class="h-4 w-4 transition-transform duration-200"
+                                data-mobile-shop-chevron
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+                        <div
+                            class="hidden border-l border-primary/60 pl-4"
+                            id="mobile-shop-categories"
+                        >
+                            {categories.map((category) => (
+                                <a
+                                    href={`/products?cat=${category.slug}`}
+                                    class="flex items-center gap-3 py-2.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+                                >
+                                    <span class="h-1.5 w-1.5 rounded-full bg-primary/70"></span>
+                                    {category.name}
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <a
+                        href={item.href}
+                        class:list={[
+                            "py-3 text-sm font-medium transition-colors hover:text-primary",
+                            isActive(item.href)
+                                ? "text-primary"
+                                : "text-muted-foreground",
+                        ]}
+                    >
+                        {item.label}
+                    </a>
+                ),
+            )}
+            <a
+                href="/products"
+                class="mt-2 rounded-sm bg-primary px-5 py-3 text-center text-sm font-semibold text-primary-foreground"
+            >
+                Shop Now
+            </a>
+        </nav>
+    </div>
+</header>
+
+<script>
+    const toggle = document.getElementById("menu-toggle");
+    const menu = document.getElementById("mobile-menu");
+    const shopNavItem = document.getElementById("shop-nav-item");
+    const shopTrigger = document.getElementById("shop-trigger");
+    const megaMenu = document.getElementById("shop-mega-menu");
+    const chevron = shopTrigger?.querySelector("[data-shop-chevron]");
+    const underline = shopTrigger?.querySelector("[data-shop-underline]");
+    const mobileShopTrigger = document.getElementById("mobile-shop-trigger");
+    const mobileShopCategories = document.getElementById(
+        "mobile-shop-categories",
+    );
+    const mobileShopChevron = mobileShopTrigger?.querySelector(
+        "[data-mobile-shop-chevron]",
+    );
+    let closeTimer: number | undefined;
+
+    const setDesktopMenu = (open: boolean) => {
+        if (!megaMenu || !shopTrigger) return;
+        window.clearTimeout(closeTimer);
+        megaMenu.classList.toggle("pointer-events-none", !open);
+        megaMenu.classList.toggle("translate-y-0", open);
+        megaMenu.classList.toggle("-translate-y-2", !open);
+        megaMenu.classList.toggle("opacity-100", open);
+        megaMenu.classList.toggle("opacity-0", !open);
+        shopTrigger.setAttribute("aria-expanded", String(open));
+        chevron?.classList.toggle("rotate-180", open);
+        underline?.classList.toggle("scale-x-100", open);
+    };
+
+    const scheduleClose = () => {
+        window.clearTimeout(closeTimer);
+        closeTimer = window.setTimeout(() => setDesktopMenu(false), 150);
+    };
+
+    shopNavItem?.addEventListener("mouseenter", () => setDesktopMenu(true));
+    shopNavItem?.addEventListener("mouseleave", scheduleClose);
+    megaMenu?.addEventListener("mouseenter", () => setDesktopMenu(true));
+    megaMenu?.addEventListener("mouseleave", scheduleClose);
+    shopTrigger?.addEventListener("focus", () => setDesktopMenu(true));
+    shopTrigger?.addEventListener("click", (event) => {
+        if (window.innerWidth < 1024) {
+            event.preventDefault();
+        }
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            setDesktopMenu(false);
+            shopTrigger?.blur();
+            mobileShopTrigger?.focus();
+        }
+    });
+
+    toggle?.addEventListener("click", () => {
+        const isOpen = !menu?.classList.contains("hidden");
+        menu?.classList.toggle("hidden", isOpen);
+        toggle.setAttribute("aria-expanded", String(!isOpen));
+    });
+
+    mobileShopTrigger?.addEventListener("click", () => {
+        const isOpen = !mobileShopCategories?.classList.contains("hidden");
+        mobileShopCategories?.classList.toggle("hidden", isOpen);
+        mobileShopTrigger.setAttribute("aria-expanded", String(!isOpen));
+        mobileShopChevron?.classList.toggle("rotate-180", !isOpen);
+    });
+
+    const nav = document.getElementById("site-nav");
+    window.addEventListener("scroll", () => {
+        const y = window.scrollY;
+        if (y > 20) {
+            nav?.classList.add(
+                "bg-background/90",
+                "shadow-lg",
+                "shadow-black/20",
+            );
+        } else {
+            nav?.classList.remove(
+                "bg-background/90",
+                "shadow-lg",
+                "shadow-black/20",
+            );
+        }
+    });
+</script>

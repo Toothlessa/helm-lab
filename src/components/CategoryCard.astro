@@ -1,0 +1,50 @@
+---
+import { products, categories } from '../data/site';
+
+interface Props {
+  category: { slug: string; name: string; blurb: string };
+  index: number;
+}
+
+const { category, index } = Astro.props;
+
+const categoryProducts = products.filter((p) => p.category === category.slug);
+const image = categoryProducts[0]?.image ?? '';
+
+const heroImages = [
+  'https://images.pexels.com/photos/14848112/pexels-photo-14848112.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  'https://images.pexels.com/photos/30444150/pexels-photo-30444150.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  'https://images.pexels.com/photos/7859464/pexels-photo-7859464.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  'https://images.pexels.com/photos/39875846/pexels-photo-39875846.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  'https://images.pexels.com/photos/13365467/pexels-photo-13365467.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  'https://images.pexels.com/photos/29795294/pexels-photo-29795294.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+];
+---
+
+<a
+  href={`/products?cat=${category.slug}`}
+  class="group relative block overflow-hidden rounded-lg border border-border bg-card"
+>
+  <div class="aspect-[16/10] overflow-hidden md:aspect-[16/9]">
+    <img
+      src={image || heroImages[index % heroImages.length]}
+      alt={category.name}
+      loading="lazy"
+      class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+    />
+  </div>
+  <div class="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent"></div>
+  <div class="absolute bottom-0 left-0 right-0 p-6">
+    <h3 class="font-display text-2xl font-bold tracking-tight text-foreground">
+      {category.name}
+    </h3>
+    <p class="mt-1 text-sm text-muted-foreground">{category.blurb}</p>
+    <span class="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors group-hover:gap-3">
+      Explore
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <polyline points="12 5 19 12 12 19" />
+      </svg>
+    </span>
+  </div>
+</a>

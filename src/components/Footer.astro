@@ -1,0 +1,72 @@
+---
+import { site, nav } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-border/40 bg-card/30">
+  <div class="container-site py-16">
+    <div class="grid gap-12 md:grid-cols-4">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-2.5">
+          <span class="flex h-8 w-8 items-center justify-center rounded-sm bg-primary text-primary-foreground font-display font-extrabold text-sm">
+            N
+          </span>
+          <span class="font-display text-xl font-bold tracking-tight">{site.name}</span>
+        </div>
+        <p class="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
+          {site.description} Every batch is roasted in small quantities and shipped within 48 hours.
+        </p>
+        <p class="mt-6 text-xs uppercase tracking-[0.2em] text-muted-foreground/60">
+          {site.tagline}
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Navigate</h3>
+        <ul class="mt-4 space-y-3">
+          {
+            nav.map((item) => (
+              <li>
+                <a href={item.href} class="text-sm text-muted-foreground transition-colors hover:text-primary">
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Contact</h3>
+        <ul class="mt-4 space-y-3">
+          <li>
+            <a href={`mailto:${site.email}`} class="text-sm text-muted-foreground transition-colors hover:text-primary">
+              {site.email}
+            </a>
+          </li>
+          <li class="text-sm text-muted-foreground">{site.instagram}</li>
+          <li>
+            <a
+              href={`https://wa.me/${site.whatsapp}`}
+              target="_blank"
+              rel="noopener"
+              class="text-sm text-muted-foreground transition-colors hover:text-primary"
+            >
+              WhatsApp Orders
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col items-start justify-between gap-4 border-t border-border/40 pt-8 sm:flex-row sm:items-center">
+      <p class="text-xs text-muted-foreground/60">
+        © {year} {site.name}. All rights reserved.
+      </p>
+      <p class="text-xs text-muted-foreground/60">
+        Roasted with intention. Brewed in shadow.
+      </p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,112 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProductCardGrid from '../../components/ProductCardGrid.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { products, categories } from '../../data/site';
+---
+
+<Layout title="Shop All Coffee — NOIR" description="Browse our full collection of small-batch roasted coffee.">
+
+  <!-- Page header -->
+  <section class="border-b border-border/40 pt-32 pb-12 md:pt-40 md:pb-16">
+    <div class="container-site">
+      <p class="text-xs font-semibold uppercase tracking-[0.25em] text-primary">
+        All Products
+      </p>
+      <h1 class="mt-3 font-display text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+        The Full Lineup
+      </h1>
+      <p class="mt-4 max-w-lg text-base text-muted-foreground md:text-lg">
+        Every roast we offer. Filter by category, tap to order through WhatsApp.
+      </p>
+    </div>
+  </section>
+
+  <!-- Filter bar -->
+  <section class="sticky top-16 z-30 border-b border-border/40 bg-background/80 backdrop-blur-xl md:top-20" id="categories">
+    <div class="container-site py-4">
+      <div class="flex items-center gap-2 overflow-x-auto" id="filter-bar">
+        <button
+          class="filter-btn shrink-0 rounded-sm border border-primary bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors"
+          data-cat="all"
+        >
+          All
+        </button>
+        {
+          categories.map((cat) => (
+            <button
+              class="filter-btn shrink-0 rounded-sm border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
+              data-cat={cat.slug}
+            >
+              {cat.name}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Product grid -->
+  <section class="py-12 md:py-20">
+    <div class="container-site">
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" id="product-grid">
+        {products.map((product) => <ProductCardGrid product={product} />)}
+      </div>
+      <div class="hidden py-20 text-center" id="empty-state">
+        <p class="text-lg font-medium text-muted-foreground">No products in this category yet.</p>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<script>
+  const buttons = document.querySelectorAll('.filter-btn');
+  const grid = document.getElementById('product-grid');
+  const emptyState = document.getElementById('empty-state');
+  const cards = grid?.querySelectorAll('article');
+
+  function setActive(btn: Element) {
+    buttons.forEach((b) => {
+      b.classList.remove('border-primary', 'bg-primary', 'text-primary-foreground');
+      b.classList.add('border-border', 'text-muted-foreground');
+    });
+    btn.classList.add('border-primary', 'bg-primary', 'text-primary-foreground');
+    btn.classList.remove('border-border', 'text-muted-foreground');
+  }
+
+  function filter(cat: string) {
+    let visible = 0;
+    cards?.forEach((card) => {
+      const matches = cat === 'all' || card.getAttribute('data-cat') === cat;
+      if (matches) {
+        card.classList.remove('hidden');
+        visible++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+    if (visible === 0) {
+      emptyState?.classList.remove('hidden');
+    } else {
+      emptyState?.classList.add('hidden');
+    }
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setActive(btn);
+      filter(btn.getAttribute('data-cat') || 'all');
+    });
+  });
+
+  const params = new URLSearchParams(window.location.search);
+  const initialCat = params.get('cat');
+  if (initialCat) {
+    const targetBtn = document.querySelector(`.filter-btn[data-cat="${initialCat}"]`);
+    if (targetBtn) {
+      setActive(targetBtn);
+      filter(initialCat);
+    }
+  }
+</script>
